@@ -8,6 +8,7 @@ fastapi==0.141.1
 uvicorn[standard]==0.52.4
 pydantic==2.13.4
 pydantic-settings==2.15.0
+email-validator==2.2.0
 
 # Database driver (project_context.md specifies psycopg 3, not psycopg2)
 psycopg[binary]==3.3.4
