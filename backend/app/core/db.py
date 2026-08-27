@@ -29,6 +29,19 @@ def init_pool() -> None:
             min_size=1,
             max_size=10,
             open=True,
+            # Hosted Postgres (Neon, Supabase) closes idle connections from
+            # its own side. Without these settings the pool eventually hands
+            # out a dead connection and the request fails with
+            # "SSL connection has been closed unexpectedly".
+            #
+            # check     — test a connection before handing it over, and
+            #             quietly replace it if it's dead
+            # max_idle  — retire idle connections after 2 minutes, well
+            #             before the provider drops them
+            check=ConnectionPool.check_connection,
+            max_idle=120,
+            max_lifetime=600,
+            reconnect_timeout=10,
             kwargs={"row_factory": dict_row},
         )
         logger.info("Database pool opened for %s", settings.DB_NAME)
