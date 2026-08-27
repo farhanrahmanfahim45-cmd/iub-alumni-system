@@ -1,0 +1,29 @@
+# Backend dependencies — install with:
+#   pip install -r backend/requirements.txt
+#
+# On Windows, psycopg needs the binary distribution:
+#   pip install "psycopg[binary]"
+
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.4
+pydantic-settings==2.15.0
+
+# Database driver (project_context.md specifies psycopg 3, not psycopg2)
+psycopg[binary]==3.3.4
+psycopg-pool==3.3.1
+
+# Auth
+PyJWT==2.7.0
+bcrypt==5.0.0
+
+# Configuration
+python-dotenv==1.2.2
+
+# Data loading (database/load_data.py, database/clean_dataset.py)
+pandas==3.0.2
+openpyxl==3.1.5
+
+# Testing
+httpx==0.28.1
+pytest==8.3.4

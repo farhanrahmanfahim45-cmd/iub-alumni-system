@@ -1,0 +1,14 @@
+IUB ALUMNI INFORMATION MANAGEMENT SYSTEM
+========================================
+
+Open SETUP.md and follow it top to bottom.
+
+Any text editor opens it. It reads better on GitHub or in VS Code,
+which render the formatting, but Notepad works fine.
+
+Do not rearrange these folders. Python and Node find files by their
+path, so moving one file breaks the whole thing.
+
+  SETUP.md    <- start here
+  README.md   <- what the system does
+  docs/       <- every decision, written down

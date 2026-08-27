@@ -1,0 +1,1256 @@
+/* =====================================================================
+   Design tokens
+   =====================================================================
+   Colours are the values measured from IUB_Logo.png in
+   docs/brand_guidelines.md, not the provisional approximations in the
+   UI/UX doc — the brand document supersedes those.
+
+   Type is Inter throughout, per docs/ui_ux_recommendation.md §3.2:
+   one family, with weight doing the differentiating, so the interface
+   stays quiet and the data is the loudest thing on screen.
+   ===================================================================== */
+
+:root {
+  /* Brand — measured from the university seal */
+  --iub-navy: #2e3192;
+  --iub-purple: #812990;
+  --iub-orange: #f7941d;
+  --iub-gray: #636466;
+
+  /* Navy tints, for hovers and selected rows */
+  --navy-700: #262a7d;
+  --navy-100: #e6e7f4;
+  --navy-50: #f2f3fa;
+
+  /* Ink and surface */
+  --ink-900: #1a1d24;
+  --ink-700: #363c47;
+  --ink-500: #5b6370;
+  --ink-400: #808995;
+  --surface-0: #ffffff;
+  --surface-50: #f6f7fb;
+  --border: #e4e7ee;
+  --border-strong: #cfd4e0;
+
+  /* Status — one hue per state, used identically everywhere a state
+     appears (directory, submissions, profile). */
+  --status-positive: #1e8e5a;
+  --status-positive-bg: #e7f4ee;
+  --status-pending: #b26a00; /* darkened IUB orange, for AA on white */
+  --status-pending-bg: #fdf1de;
+  --status-negative: #c0392f;
+  --status-negative-bg: #fbeae8;
+  --status-attention: var(--iub-purple);
+  --status-attention-bg: #f4e9f6;
+  --status-neutral: var(--ink-500);
+  --status-neutral-bg: #eef0f4;
+
+  /* Type scale */
+  --text-2xl: 1.75rem;
+  --text-xl: 1.375rem;
+  --text-lg: 1.125rem;
+  --text-md: 1rem;
+  --text-sm: 0.875rem;
+  --text-xs: 0.75rem;
+
+  /* Spacing, radius, elevation */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --radius: 8px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-panel: 0 8px 24px rgba(16, 24, 40, 0.12);
+
+  --row-height: 48px;
+  --transition: 150ms ease-out;
+}
+
+/* =====================================================================
+   Base
+   ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-50);
+  color: var(--ink-900);
+  font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+h1 {
+  font-size: var(--text-2xl);
+}
+h2 {
+  font-size: var(--text-xl);
+}
+h3 {
+  font-size: var(--text-lg);
+}
+
+a {
+  color: var(--iub-navy);
+}
+
+/* Numbers align in tables and KPI cards — CGPA, years, counts. */
+.tnum,
+td,
+th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keyboard focus is purple so it never reads as a navy hover state. */
+:focus-visible {
+  outline: 2px solid var(--iub-purple);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =====================================================================
+   Layout
+   ===================================================================== */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.brand__seal {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+
+.brand__name {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.brand__dept {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__spacer {
+  flex: 1;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.account__name {
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.account__role {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--navy-100);
+  color: var(--iub-navy);
+  font-weight: 600;
+  font-size: var(--text-xs);
+}
+
+/* Labelled horizontal tabs, not an icon rail: faculty use this rarely
+   and shouldn't have to decode icons. */
+.nav {
+  display: flex;
+  gap: var(--space-1);
+  padding: 0 var(--space-5);
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.nav__link {
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 2px solid transparent;
+  color: var(--ink-500);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.nav__link:hover {
+  color: var(--ink-900);
+}
+
+.nav__link--active {
+  color: var(--iub-navy);
+  border-bottom-color: var(--iub-navy);
+}
+
+.page {
+  flex: 1;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: var(--space-5);
+}
+
+.page__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.page__count {
+  color: var(--ink-500);
+  margin-top: var(--space-1);
+}
+
+.layout-split {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* =====================================================================
+   Cards, tables, controls
+   ===================================================================== */
+
+.card {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.card__title {
+  font-weight: 600;
+  font-size: var(--text-md);
+}
+
+.card__body {
+  padding: var(--space-5);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-500);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable:hover {
+  color: var(--ink-900);
+}
+
+th .sort-caret {
+  margin-left: var(--space-1);
+  color: var(--iub-navy);
+}
+
+tbody td {
+  height: var(--row-height);
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+tbody tr.clickable {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+tbody tr.clickable:hover {
+  background: var(--navy-50);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cell-person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cell-name {
+  font-weight: 500;
+}
+
+.muted {
+  color: var(--ink-400);
+}
+
+/* Controls */
+label.field {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.field__label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--ink-700);
+  font-weight: 500;
+  font-size: var(--text-xs);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 9px var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-0);
+  color: inherit;
+  font: inherit;
+  transition: border-color var(--transition);
+}
+
+input:hover,
+select:hover {
+  border-color: var(--ink-400);
+}
+
+input::placeholder {
+  color: var(--ink-400);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 9px var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--iub-navy);
+  color: #fff;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--navy-700);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--ink-700);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface-50);
+  border-color: var(--ink-400);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--sm {
+  padding: 5px var(--space-3);
+  font-size: var(--text-xs);
+}
+
+/* Status pill — colour by state, consistent across every screen. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.pill--positive {
+  color: var(--status-positive);
+  background: var(--status-positive-bg);
+}
+.pill--pending {
+  color: var(--status-pending);
+  background: var(--status-pending-bg);
+}
+.pill--negative {
+  color: var(--status-negative);
+  background: var(--status-negative-bg);
+}
+.pill--attention {
+  color: var(--status-attention);
+  background: var(--status-attention-bg);
+}
+.pill--neutral {
+  color: var(--status-neutral);
+  background: var(--status-neutral-bg);
+}
+
+/* Filters */
+.filters__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.filters__title {
+  font-weight: 600;
+}
+
+.filters__count {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--navy-100);
+  color: var(--iub-navy);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--ink-500);
+  flex-wrap: wrap;
+}
+
+.pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Empty, loading, error */
+.empty {
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+}
+
+.empty__title {
+  font-weight: 600;
+  font-size: var(--text-md);
+  margin-bottom: var(--space-2);
+}
+
+.empty__body {
+  color: var(--ink-500);
+  max-width: 42ch;
+  margin: 0 auto;
+}
+
+/* Skeletons match the final row height, so nothing shifts on load. */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-50) 25%,
+    #eceef5 37%,
+    var(--surface-50) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.alert {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+  font-size: var(--text-sm);
+}
+
+.alert--error {
+  color: var(--status-negative);
+  background: var(--status-negative-bg);
+  border-color: #f2cbc6;
+}
+
+.field-error {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--status-negative);
+  font-size: var(--text-xs);
+}
+
+/* =====================================================================
+   Sign in
+   ===================================================================== */
+
+.signin {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: var(--space-5);
+  background: var(--surface-50);
+}
+
+.signin__card {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-6);
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.signin__seal {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto var(--space-4);
+}
+
+.signin__title {
+  text-align: center;
+  font-size: var(--text-lg);
+}
+
+.signin__sub {
+  margin: var(--space-2) 0 var(--space-6);
+  color: var(--ink-500);
+  text-align: center;
+}
+
+.signin__hint {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+/* =====================================================================
+   Responsive — desktop-first for staff, mobile-friendly for alumni
+   ===================================================================== */
+
+@media (max-width: 1080px) {
+  .layout-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: var(--space-4);
+  }
+  .brand__dept,
+  .account__name,
+  .account__role {
+    display: none;
+  }
+  .topbar,
+  .nav {
+    padding-inline: var(--space-4);
+  }
+}
+
+/* =====================================================================
+   Tabs — queue states (Verification Centre)
+   ===================================================================== */
+
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--ink-500);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.tab:hover {
+  color: var(--ink-900);
+}
+
+.tab--active {
+  color: var(--iub-navy);
+  border-bottom-color: var(--iub-navy);
+}
+
+/* =====================================================================
+   Side panel — review without leaving the queue
+   ===================================================================== */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(16, 24, 40, 0.32);
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 21;
+  display: flex;
+  flex-direction: column;
+  width: min(540px, 100%);
+  background: var(--surface-0);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-panel);
+  animation: panel-in 180ms ease-out;
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+}
+
+.panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+
+/* Actions live below the comparison, so nothing is decided before it's
+   been scrolled past. */
+.panel__foot {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--surface-50);
+}
+
+.panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.confirm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-0);
+  flex-wrap: wrap;
+}
+
+.confirm__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Intent-coloured buttons: the colour says what happens before the label
+   is read. */
+.btn--danger {
+  background: var(--status-negative);
+}
+.btn--danger:hover:not(:disabled) {
+  background: #a72f26;
+}
+.btn--danger-outline {
+  background: transparent;
+  border-color: var(--status-negative);
+  color: var(--status-negative);
+}
+.btn--danger-outline:hover:not(:disabled) {
+  background: var(--status-negative-bg);
+}
+.btn--warn {
+  background: var(--status-pending);
+}
+.btn--warn:hover:not(:disabled) {
+  background: #965900;
+}
+.btn--warn-outline {
+  background: transparent;
+  border-color: var(--status-pending);
+  color: var(--status-pending);
+}
+.btn--warn-outline:hover:not(:disabled) {
+  background: var(--status-pending-bg);
+}
+
+/* =====================================================================
+   Current → Proposed comparison
+   ===================================================================== */
+
+.diff {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.diff__head,
+.diff__row {
+  display: grid;
+  grid-template-columns: minmax(96px, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-0);
+  align-items: baseline;
+}
+
+.diff--single .diff__row {
+  grid-template-columns: minmax(96px, 1fr) minmax(0, 2.6fr);
+}
+
+.diff__head {
+  background: var(--surface-50);
+  padding-block: var(--space-2);
+}
+
+.diff__col-label {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.diff__col-label--new {
+  color: var(--iub-navy);
+}
+
+.diff__label {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.diff__current,
+.diff__proposed {
+  margin: 0;
+  word-break: break-word;
+  font-variant-numeric: tabular-nums;
+}
+
+.diff__current {
+  color: var(--ink-500);
+}
+
+.diff__proposed {
+  color: var(--ink-900);
+  font-weight: 500;
+}
+
+.diff__unchanged {
+  font-weight: 400;
+  font-size: var(--text-xs);
+}
+
+.diff__note {
+  margin: 0 0 var(--space-3);
+  color: var(--ink-500);
+}
+
+/* =====================================================================
+   Notes, forms, side navigation
+   ===================================================================== */
+
+.note {
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-50);
+}
+
+.note--attention {
+  border-left-color: var(--status-attention);
+  background: var(--status-attention-bg);
+}
+
+.note--positive {
+  border-left-color: var(--status-positive);
+  background: var(--status-positive-bg);
+}
+
+.card--attention {
+  border-color: #dcc2e2;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0 var(--space-5);
+}
+
+.field__hint {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--ink-400);
+  font-size: var(--text-xs);
+}
+
+.sidenav__item {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-700);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.sidenav__item:hover {
+  background: var(--surface-50);
+}
+
+.sidenav__item--active {
+  background: var(--navy-100);
+  color: var(--iub-navy);
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .panel {
+    width: 100%;
+  }
+  .diff__head,
+  .diff__row {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+  .diff__head {
+    display: none;
+  }
+  /* Without the column headers, the values need their own labels. */
+  .diff__current::before {
+    content: "On record: ";
+    color: var(--ink-400);
+    font-size: var(--text-xs);
+  }
+  .diff__proposed::before {
+    content: "Proposed: ";
+    color: var(--iub-navy);
+    font-size: var(--text-xs);
+    font-weight: 400;
+  }
+  .diff--single .diff__proposed::before {
+    content: none;
+  }
+}
+
+/* =====================================================================
+   Dashboards
+   ===================================================================== */
+
+/* Filters sit above the charts, not in a sidebar: the PRD requires every
+   visual to react to them, and that relationship should be visible. */
+.filterbar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  flex-wrap: wrap;
+}
+
+.filterbar__field {
+  flex: 1 1 150px;
+  min-width: 132px;
+}
+
+.filterbar .btn {
+  margin-left: auto;
+}
+
+.dash {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* A filter change refetches; dimming says "these numbers are updating"
+   without tearing the whole page down to skeletons. */
+.dash--refreshing {
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+
+.dash__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* KPI cards */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.kpi__label {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpi__value {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* A bare number reads as static; the bar gives it a sense of scale. */
+.kpi__bar {
+  display: block;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-50);
+  overflow: hidden;
+}
+
+.kpi__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 240ms ease-out;
+}
+
+.kpi__bar-fill--navy {
+  background: var(--iub-navy);
+}
+.kpi__bar-fill--purple {
+  background: var(--iub-purple);
+}
+.kpi__bar-fill--orange {
+  background: var(--iub-orange);
+}
+.kpi__bar-fill--positive {
+  background: var(--status-positive);
+}
+.kpi__bar-fill--neutral {
+  background: var(--ink-400);
+}
+
+.kpi__detail {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+}
+
+/* Ranked bar list — legible with twenty categories, unlike a pie. */
+.barlist {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barlist__row {
+  display: grid;
+  grid-template-columns: minmax(96px, 1.1fr) minmax(0, 2fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.barlist__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barlist__track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-50);
+  overflow: hidden;
+}
+
+.barlist__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 240ms ease-out;
+}
+
+.barlist__value {
+  font-weight: 500;
+  text-align: right;
+  min-width: 40px;
+}
+
+.barlist__share {
+  text-align: right;
+  min-width: 36px;
+  font-size: var(--text-xs);
+}
+
+/* =====================================================================
+   Data quality — a worklist, so the tiles are links
+   ===================================================================== */
+
+.quality-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.quality {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  color: inherit;
+  text-decoration: none;
+}
+
+.quality--flagged {
+  border-color: #f0d3a8;
+  background: linear-gradient(var(--status-pending-bg), var(--surface-0) 64px);
+}
+
+.quality--link {
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.quality--link:hover {
+  border-color: var(--iub-navy);
+  transform: translateY(-1px);
+}
+
+.quality__value {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.quality__label {
+  font-weight: 500;
+}
+
+.quality__hint {
+  color: var(--ink-500);
+  font-size: var(--text-xs);
+}
+
+.quality__cta {
+  margin-top: var(--space-2);
+  color: var(--iub-navy);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+@media (max-width: 1080px) {
+  .dash__grid {
+    grid-template-columns: 1fr;
+  }
+  .dash__grid .card {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .filterbar__field {
+    flex: 1 1 100%;
+  }
+  .filterbar .btn {
+    margin-left: 0;
+    width: 100%;
+  }
+  .barlist__row {
+    grid-template-columns: 1fr auto auto;
+  }
+  /* The track is the first thing to go when space is tight — the label
+     and the number carry the meaning. */
+  .barlist__track {
+    display: none;
+  }
+}
