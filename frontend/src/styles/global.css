@@ -177,6 +177,7 @@ th {
 
 .brand__name {
   font-weight: 600;
+   display: block;
   font-size: var(--text-sm);
   line-height: 1.25;
   white-space: nowrap;
@@ -184,6 +185,7 @@ th {
 
 .brand__dept {
   color: var(--ink-500);
+   display: block;
   font-size: var(--text-xs);
   line-height: 1.25;
   white-space: nowrap;
