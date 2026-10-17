@@ -1,130 +1,104 @@
-# IUB Alumni Information Management System
+# Farhan Rahman Fahim — Portfolio
 
-A departmental information system for the Department of International Business, Independent University, Bangladesh. Centralises alumni academic, contact, and career records; lets alumni maintain their own information through a verification workflow; and gives faculty live academic and career analytics.
-
-Built as a prototype on ~500 synthetic records, structured to become the department's long-term system.
-
----
-
-## What it does
-
-The full information lifecycle, not just a website:
-
-```
-Collect → Validate → Verify → Store → Manage → Analyze → Update → Audit
-```
-
-**Alumni** see their own profile, submit updates, and track what happened to them.
-**Faculty** search the directory, read profiles, and use both dashboards. Read-only, everywhere.
-**Administrators** verify submissions, correct records, manage accounts, and read the audit trail.
-
-The rule the whole system rests on: **alumni-submitted changes are proposals, not writes.** Nothing reaches the official tables until an admin approves it, and that approval and its audit entry commit in one transaction.
-
----
+Production-ready personal portfolio built in React + TypeScript, per the project PRD.
 
 ## Stack
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4 (theme tokens in `src/index.css`)
+- Framer Motion (animations)
+- React Router (client-side routing, `/` and `/work/:slug`)
+- lucide-react (icons)
 
-React + TypeScript · FastAPI + Python · PostgreSQL 18 · Recharts
-
-The frontend never touches PostgreSQL. Every read and write goes through the API.
-
----
-
-## Layout
-
-```
-backend/                FastAPI application (29 endpoints)
-  app/core/             config, db pool, security, submissions, audit, hardening
-  app/routers/          auth, alumni, submissions, admin, dashboard, users
-  tests/                188 end-to-end checks
-frontend/               React + TypeScript (9 screens)
-  src/pages/            sign-in, directory, profile, update, submissions,
-                        verification, 2 dashboards, data quality, accounts
-  verify-*.mjs          142 API contract checks
-database/
-  schema.sql            the four core tables
-  migrations/           constraint fixes, supporting tables, app role
-  clean_dataset.py      the cleaning that produced the final dataset
-  load_data.py          idempotent loader with pre-write validation
-  seed_users.py         demo accounts
-  backup.py             pg_dump with verification and retention
-data/
-  validated_data_final.xlsx
-docs/                   PRD, API spec, security, data workflow, database
-                        dictionary, UI/UX, brand, deployment, changelogs
-```
-
-## Getting started
-
-Full instructions in **`docs/deployment.md`**. The short version:
-
+## Getting Started
 ```bash
-pip install -r backend/requirements.txt
-cd frontend && npm install && npm run build && cd ..
-
-psql -U postgres -c "CREATE DATABASE iub_alumni;"
-psql -U postgres -d iub_alumni -f database/schema.sql
-psql -U postgres -d iub_alumni -f database/migrations/001_core_constraints.sql
-psql -U postgres -d iub_alumni -f database/migrations/002_supporting_tables.sql
-psql -U postgres -d iub_alumni -f database/migrations/003_app_role.sql   # edit the password first
-
-# create backend/.env from .env.example, then:
-python database/load_data.py
-python database/seed_users.py
-
-cd backend && uvicorn app.main:app --port 8000
+npm install
+npm run dev       # local dev server
+npm run build     # production build -> dist/
+npm run preview   # preview the production build
 ```
 
----
+## Editing Content (no component changes needed)
+All editable content lives in `src/data/`:
 
-## Testing
-
-330 automated checks, all passing against a live PostgreSQL instance and the loaded 500-record dataset.
-
-| Suite | Checks | Covers |
-|---|---|---|
-| `backend/tests/test_api.py` | 44 | Authentication, RBAC, directory, profiles |
-| `backend/tests/test_workflow.py` | 69 | Submissions, admin writes, auditing, atomicity |
-| `backend/tests/test_dashboard.py` | 75 | Analytics against independent SQL, users, registration |
-| `frontend/verify-api-contract.mjs` | 31 | The shapes the sign-in, directory and profile pages consume |
-| `frontend/verify-workflow-contract.mjs` | 34 | The submission lifecycle as the three workflow pages drive it |
-| `frontend/verify-dashboard-contract.mjs` | 77 | Every chart key and KPI field the analytics pages read |
-
-The security boundaries are tested as hard as the happy paths: an alumnus reading another's record, faculty attempting a write, a pending submission checked against the database directly to confirm it hasn't landed, an over-length value rolled back cleanly at approval.
-
----
-
-## Documentation
-
-| Document | What it settles |
+| File | Controls |
 |---|---|
-| `docs/api_spec.md` | Endpoints, request and response shapes, role matrix |
-| `docs/security.md` | Authentication, roles, data protection — treated as hard requirements |
-| `docs/data_workflow.md` | Where data comes from and what may write to official tables |
-| `docs/database_dictionary.md` | Every field, its expected values, and the relationships |
-| `docs/migrations_guide.md` | What each migration changes and why |
-| `docs/data_load_issues.md` | Problems found in the source dataset |
-| `docs/data_cleaning_changelog.md` | Every change made to that data, and how to reverse it |
-| `docs/ui_ux_recommendation.md` | Layout, components, interaction patterns |
-| `docs/brand_guidelines.md` | Colours measured from the seal, and what IUB still needs to supply |
-| `docs/deployment.md` | Install, hardening, TLS, backups, go-live checks |
+| `site.ts` | Name, tagline, contact links, resume path, nav labels, approach steps |
+| `skills.ts` | "What I Work With" capability groups |
+| `projects.ts` | All 5 projects — metrics, gallery images, case-study sections, links |
+| `experience.ts` | Experience timeline entries |
+| `achievements.ts` | Recognition cards + proof images |
+| `creative.ts` | Creative Work grid (currently placeholders — see below) |
+
+### Adding a new project
+1. Add optimized images (WebP recommended) to `public/projects/<slug>/`
+2. Add a new object to the `projects` array in `src/data/projects.ts`
+3. Any `links.*` field left unset is automatically hidden in the UI — no need to touch components.
+
+### Live-project cards (Habito, IUB Alumni Database)
+Projects with `links.live` set get a split card: clicking the preview image opens the live
+site in a new tab, clicking the text opens the details page. A project can also carry a
+`disclaimer` banner and a `demoAccess` block (demo logins) — both render on its details page.
+Replace the generated preview images in `public/projects/habito/` and
+`public/projects/iub-alumni/` with real screenshots (keep the same file names, or update
+`coverImage` / `gallery` in `projects.ts`).
+
+### Creative Work section
+No exported creative/design assets (e.g. Canva graphics, event posters) were available
+at build time, so `src/data/creative.ts` currently contains 3 placeholder entries
+marked `[ADD CREATIVE WORK TITLE]` / `[ADD DESCRIPTION]` with `image: ""`. Replace
+`image` with a real path under `public/creative/` and update the copy to activate them.
+
+### Known content notes
+- BAYLA Future Leaders: source materials showed two distinct results — a Champion
+  title at the Intra-IUB round, and a Finalist result at the national Summit. Both
+  are listed separately in `achievements.ts` rather than merged into one claim.
+- No SQL/Python/report files were available for the Grameenphone project specifically
+  (only the 3 Power BI dashboard exports) — this is noted transparently in that
+  project's case study rather than fabricated.
+- The GitHub link used for the Bike project is Farhan's general GitHub profile
+  (the only GitHub URL present in the source material), not a project-specific repo.
+  Update `links.github` in `projects.ts` once a dedicated repo exists.
+
+## Deployment
+`npm run build` outputs a static site in `dist/` — deployable to Vercel, Netlify,
+GitHub Pages, or any static host. Client-side routing requires a rewrite rule to
+`index.html` for all paths (already the default on Vercel/Netlify; for GitHub Pages
+add a `404.html` copy of `index.html`).
 
 ---
 
-## Two open decisions
+<details>
+<summary>Original Vite template notes</summary>
 
-Both need the department, not more code.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-**1. The `personal_email` constraint.** `schema.sql` pins it to `@iub.edu.bd`, so an alumnus can never save a post-graduation address — which is the entire point of the self-service flow. Migration 001 §1 relaxes it and moves the institutional rule to its own column. Apply it, or accept the limitation deliberately.
+Currently, two official plugins are available:
 
-**2. Contact visibility.** Personal email and phone are currently admin-only, the most restrictive reading of `docs/security.md` §4, because the department hasn't set a policy. If faculty should see them, it's one line in `can_see_contact_details` — the frontend already adapts.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-`docs/brand_guidelines.md` also lists what IUB's communications office still needs to provide: official typefaces, a vector seal, and logo usage rules. The interface uses reasonable placeholders and marks them as such.
+## React Compiler
 
----
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Notes on the dataset
+## Expanding the Oxlint configuration
 
-The prototype data is synthetic and disposable. It arrived labelled `VALID` on every row, but checking it against the schema found 13 records that would have failed the foreign keys outright and five that would have been rejected by a CHECK constraint. `docs/data_load_issues.md` records what was wrong; `docs/data_cleaning_changelog.md` records every fix and how to reverse it.
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
 
-One correction is worth knowing about: clearing 56 rows where `minor` duplicated `major` moved the IB Minors figure from 147 to **106**. Those records were counting the same alumnus twice. 106 is correct, but it is a visible change to a headline number, and it's a one-line revert if the department reads those rows differently.
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
+```
+
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+
+</details>
